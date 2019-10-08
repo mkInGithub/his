@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.model.mapper.PatientMapper">
+
+    <select id="getPatientNo" resultType="Patient">
+		select IFNULL(max(pid),0)+1  pid    from patient
+	</select>
+
+    <select id="getPatientData" parameterType="map" resultMap="presult">
+		select  p.*,l.levelname levelname,d.deptname  deptname,doc.dname dname
+		from  patient p,level l,dept d,doctor doc
+		where p.levelid=l.id  and  p.deptid=d.id  and p.doctorid=doc.id
+		and createdate >= #{k_date}
+		limit #{k_beginIndex},#{k_pagesize}
+	</select>
+
+    <resultMap type="Patient" id="presult">
+        <result property="pid" column="pid"/>
+        <result property="pname" column="pname"/>
+        <result property="sex" column="sex"/>
+        <result property="idcard" column="idcard"/>
+        <result property="createDate" column="createdate"/>
+        <result property="pstatus" column="pstatus"/>
+        <association property="level" column="levelid" javaType="Level" resultMap="levelResult"></association>
+        <association property="dept" column="deptid" javaType="Dept" resultMap="deptResult"></association>
+        <association property="doc" column="doctorid" javaType="Doctor" resultMap="docResult"></association>
+    </resultMap>
+
+    <resultMap type="Level" id="levelResult">
+        <result property="levelname" column="levelname"/>
+    </resultMap>
+    <resultMap type="Dept" id="deptResult">
+        <result property="deptname" column="deptname"/>
+    </resultMap>
+    <resultMap type="Doctor" id="docResult">
+        <result property="dname" column="dname"/>
+    </resultMap>
+
+    <insert id="savePatient" parameterType="Patient">
+		insert into patient values
+		(#{pid},#{pname},#{sex},#{age},#{birthday},#{idcard},#{address},#{levelid},#{deptid},#{doctorid},#{createDate},#{cost},#{pstatus},#{status},#{operator},#{operateDate})
+	</insert>
+
+    <select id="getPatientByNo" parameterType="int" resultMap="presult">
+		select  p.*,l.levelname levelname,d.deptname  deptname,doc.dname dname
+		from  patient p,level l,dept d,doctor doc
+		where p.levelid=l.id  and  p.deptid=d.id  and p.doctorid=doc.id
+		and p.pid=#{pid}
+	</select>
+
+    <update id="updatePatientStatus" parameterType="map">
+		update patient
+		set pstatus=#{k_pstatus},operator=#{k_operator},operatedate=#{k_operatedate}
+		where pid=#{k_pid}
+	</update>
+
+    <select id="getPatientDataByDoctor" parameterType="map" resultMap="presult">
+		select  p.*,l.levelname levelname,d.deptname  deptname,doc.dname dname
+		from  patient p,level l,dept d,doctor doc
+		where p.levelid=l.id  and  p.deptid=d.id  and p.doctorid=doc.id
+		and doc.dname=#{k_dname}
+		and p.createdate=#{k_createdate}
+	</select>
+
+    <select id="selectPatientByPno" parameterType="int"  resultMap="patientResult"  >
+		select  p.*,l.levelname levelname,d.deptname  deptname,doc.dname dname,
+		cir.id cirid,cir.amount camount,cir.paystatus cpaystatus,iir.id iirid
+		,iir.amount iamount,iir.paystatus ipaystatus,ci.itemname citemname,ci.price cprice,
+		ii.inspectname inspectname,ii.price iprice
+		from
+            patient p left outer join checkitemrecord cir on p.pid=cir.pid
+			left outer join inspectitemrecord iir on p.pid=iir.pid
+		left outer join checkitem ci on ci.id=cir.cid
+		left outer join inspectitem ii on ii.id=iir.inspectid,level l,dept d,doctor doc
+		where p.levelid=l.id  and  p.deptid=d.id  and p.doctorid=doc.id and  p.pid=#{pid}
+	</select>
+    <resultMap type="Patient" id="patientResult">
+        <result property="pid"  column="pid"  />
+        <result property="pname"  column="pname"  />
+        <result property="sex"  column="sex"  />
+        <result property="idcard"  column="idcard"  />
+        <result property="createDate"  column="createdate"  />
+        <result property="pstatus"  column="pstatus"  />
+        <association property="level"  column="levelid"  javaType="Level"   resultMap="levelResult"  ></association>
+        <association property="dept"  column="deptid" javaType="Dept"  resultMap="deptResult"  ></association>
+        <association property="doc"  column="doctorid" javaType="Doctor"    resultMap="docResult"  ></association>
+        <collection property="cirList" ofType="CheckItemRecord"  >
+            <result property="id"  column="cirid"  />
+            <result property="amount"  column="camount"  />
+            <result property="paystatus"  column="cpaystatus"  />
+            <association property="checkItem"   javaType="CheckItem"   resultMap="ciResult"   ></association>
+        </collection>
+        <collection property="iirList" ofType="InspectItemRecord"  >
+            <result property="id"  column="iirid"  />
+            <result property="amount"  column="iamount"  />
+            <result property="paystatus"  column="ipaystatus"  />
+            <association property="inspectItem"   javaType="InspectItem"   resultMap="iiResult"   ></association>
+        </collection>
+    </resultMap>
+    <resultMap type="CheckItem" id="ciResult">
+        <result property="itemname"  column="citemname"  />
+        <result property="price"  column="cprice"  />
+    </resultMap>
+    <resultMap type="InspectItem" id="iiResult">
+        <result property="inspectname"  column="inspectname"  />
+        <result property="price"  column="iprice"  />
+    </resultMap>
+
+
+
+</mapper>
+
+
+
+
+
+
+
+
+
+

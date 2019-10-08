@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>门诊管理_收费</title>
+    <link rel="stylesheet" href="">
+    <link rel="stylesheet" href="css/outpatient_pay.css" />
+    <script type="text/javascript" src="js/jquery-3.2.1.min.js"  ></script>
+    <script type="text/javascript" src="js/outpatient_pay.js"  ></script>
+</head>
+<body>
+<div id="div1">
+    <div class="div1_nav" id="div1_1">
+        门诊挂号管理
+    </div>
+    <div class="div1_nav">
+        门诊收费管理
+    </div>
+    <div class="div1_nav" id="div1_3">
+        门诊退号管理
+    </div>
+    <div class="div1_logout">
+        退出
+    </div>
+</div>
+<div id="div6">
+    收费列表
+</div>
+<div id="div8">
+    <form action="" id="form1">
+        <table id="table1">
+            <tr>
+                <th><input type="checkbox" id="selectAll"></th>
+                <th>项目名称</th>
+                <th>单价</th>
+                <th>数量</th>
+                <th>金额</th>
+                <th>缴费状态</th>
+            </tr>
+        </table>
+    </form>
+</div>
+<div id="div9">
+    总金额: <span id="total">0</span>元
+    应收金额: <span id="currentPay">0</span>元
+</div>
+<div id="div10">
+    <button type="button" id="submitItem">收费</button>
+</div>
+</body>
+</html>
